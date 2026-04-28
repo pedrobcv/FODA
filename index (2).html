@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis FODA Interactivo - CINDEA</title>
+    <!-- Usando Poppins como tipografía principal -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --f-color: #4CAF50; /* Verde */
+            --o-color: #2196F3; /* Azul */
+            --d-color: #FF9800; /* Naranja */
+            --a-color: #F44336; /* Rojo */
+            --text-main: #333;
+            --text-light: #666;
+            --white: #ffffff;
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --border-radius: 20px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- LOGO ESTILOS --- */
+        .app-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: contain;
+            background: white;
+            padding: 2px;
+            border: 1px solid #eee;
+        }
+
+        /* --- UTILIDADES Y ANIMACIONES --- */
+        .fade-out {
+            opacity: 0 !important;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .fade-in {
+            opacity: 1 !important;
+            transition: opacity 0.5s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            border: none;
+            outline: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* --- PASO 1: REGISTRO --- */
+        #step1 {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .login-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-hover);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-card h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .login-card p {
+            color: var(--text-light);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--o-color);
+            outline: none;
+        }
+
+        .input-group input.error {
+            border-color: var(--a-color);
+        }
+
+        .error-msg {
+            color: var(--a-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .input-group input.error + .error-msg {
+            display: block;
+        }
+
+        .btn-continue {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.6);
+        }
+
+        /* --- PASO 2: FODA --- */
+        #step2 {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .header-app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            gap: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .header-app {
+                flex-direction: row;
+            }
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .btn-change {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid #eee;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-change:hover {
+            border-color: var(--text-light);
+            color: var(--text-main);
+        }
+
+        .swot-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 768px) {
+            .swot-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow-soft);
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .card-f .card-title { color: var(--f-color); }
+        .card-o .card-title { color: var(--o-color); }
+        .card-d .card-title { color: var(--d-color); }
+        .card-a .card-title { color: var(--a-color); }
+
+        .textarea-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        textarea {
+            width: 100%;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            color: var(--text-main);
+            background: #fafafa;
+        }
+
+        .card-f textarea:focus { border-color: var(--f-color); box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); outline: none; background: #fff;}
+        .card-o textarea:focus { border-color: var(--o-color); box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1); outline: none; background: #fff;}
+        .card-d textarea:focus { border-color: var(--d-color); box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1); outline: none; background: #fff;}
+        .card-a textarea:focus { border-color: var(--a-color); box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1); outline: none; background: #fff;}
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 15px 25px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-submit.loading .spinner { display: inline-block; }
+        .btn-submit.loading .btn-text { display: none; }
+
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--white);
+            color: var(--text-main);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-left: 5px solid transparent;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left-color: var(--f-color); }
+        .toast.error { border-left-color: var(--a-color); }
+        .toast.warning { border-left-color: var(--d-color); }
+    </style>
+</head>
+<body>
+
+    <!-- PASO 1: Registro de Grupo -->
+    <section id="step1">
+        <div class="login-card">
+            <!-- NUEVA URL DE LOGO -->
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRds_-caxz7uPnvjvgVc8jnk9NIx-TaFcGRxg&s" alt="Logo CINDEA" class="app-logo">
+            
+            <h1>Bienvenido</h1>
+            <p>Por favor, ingresa el nombre de tu grupo o proyecto para comenzar el análisis FODA.</p>
+            
+            <form id="form-group" onsubmit="handleGroupSubmit(event)" style="width: 100%;">
+                <div class="input-group">
+                    <label for="groupName">Nombre del Grupo</label>
+                    <input type="text" id="groupName" placeholder="Ej: 1P2" autocomplete="off">
+                    <span class="error-msg">El nombre del grupo es obligatorio.</span>
+                </div>
+                <button type="submit" class="btn-continue">Continuar &rarr;</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- PASO 2: Formulario FODA -->
+    <section id="step2" class="hidden">
+        <div class="header-app">
+            <div class="header-left">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRds_-caxz7uPnvjvgVc8jnk9NIx-TaFcGRxg&s" alt="Logo CINDEA" class="header-logo">
+                <div class="header-title">
+                    Análisis FODA para: 
+                    <span class="badge" id="displayGroupName">Grupo</span>
+                </div>
+            </div>
+            <button class="btn-change" onclick="resetApp()">
+                ✏️ Cambiar grupo
+            </button>
+        </div>
+
+        <div class="swot-grid">
+            <!-- Fortalezas -->
+            <div class="card card-f">
+                <div class="card-header">
+                    <span class="card-icon">💪</span>
+                    <h2 class="card-title">FORTALEZAS</h2>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea id="fortalezas" rows="8" maxlength="500" placeholder="Escribe las fortalezas internas..." oninput="updateCounter(this, 'counter-f')"></textarea>
+                    <div class="char-counter" id="counter-f">0/500</div>
+                </div>
+            </div>
+
+            <!-- Oportunidades -->
+            <div class="card card-o">
+                <div class="card-header">
+                    <span class="card-icon">🚀</span>
+                    <h2 class="card-title">OPORTUNIDADES</h2>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea id="oportunidades" rows="8" maxlength="500" placeholder="Escribe las oportunidades externas..." oninput="updateCounter(this, 'counter-o')"></textarea>
+                    <div class="char-counter" id="counter-o">0/500</div>
+                </div>
+            </div>
+
+            <!-- Debilidades -->
+            <div class="card card-d">
+                <div class="card-header">
+                    <span class="card-icon">⚠️</span>
+                    <h2 class="card-title">DEBILIDADES</h2>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea id="debilidades" rows="8" maxlength="500" placeholder="Escribe las debilidades internas..." oninput="updateCounter(this, 'counter-d')"></textarea>
+                    <div class="char-counter" id="counter-d">0/500</div>
+                </div>
+            </div>
+
+            <!-- Amenazas -->
+            <div class="card card-a">
+                <div class="card-header">
+                    <span class="card-icon">🛑</span>
+                    <h2 class="card-title">AMENAZAS</h2>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea id="amenazas" rows="8" maxlength="500" placeholder="Escribe las amenazas externas..." oninput="updateCounter(this, 'counter-a')"></textarea>
+                    <div class="char-counter" id="counter-a">0/500</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-container">
+            <button id="btnSubmitFoda" class="btn-submit" onclick="submitFoda()">
+                <span class="spinner"></span>
+                <span class="btn-text">📤 ENVIAR FODA</span>
+            </button>
+        </div>
+    </section>
+
+    <div id="toast-container"></div>
+
+    <script>
+        const API_URL = 'https://api.steinhq.com/v1/storages/69f0088392b1163e975325c8/hoja%201';
+        const SESSION_KEY = 'grupoFODA';
+
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const inputGroup = document.getElementById('groupName');
+        const displayGroupName = document.getElementById('displayGroupName');
+        const btnSubmitFoda = document.getElementById('btnSubmitFoda');
+
+        const txFortalezas = document.getElementById('fortalezas');
+        const txOportunidades = document.getElementById('oportunidades');
+        const txDebilidades = document.getElementById('debilidades');
+        const txAmenazas = document.getElementById('amenazas');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedGroup = sessionStorage.getItem(SESSION_KEY);
+            if (savedGroup) {
+                showStep2(savedGroup, false);
+            }
+        });
+
+        function handleGroupSubmit(e) {
+            e.preventDefault();
+            const groupName = inputGroup.value.trim();
+            if (!groupName) {
+                inputGroup.classList.add('error');
+                inputGroup.focus();
+                return;
+            }
+            inputGroup.classList.remove('error');
+            sessionStorage.setItem(SESSION_KEY, groupName);
+            showStep2(groupName, true);
+        }
+
+        inputGroup.addEventListener('input', () => {
+            if (inputGroup.value.trim() !== '') {
+                inputGroup.classList.remove('error');
+            }
+        });
+
+        function showStep2(groupName, animate) {
+            displayGroupName.textContent = groupName;
+            if (animate) {
+                step1.classList.add('fade-out');
+                setTimeout(() => {
+                    step1.classList.add('hidden');
+                    step2.classList.remove('hidden');
+                    void step2.offsetWidth; 
+                    step2.classList.add('fade-in');
+                }, 500);
+            } else {
+                step1.classList.add('hidden');
+                step2.classList.remove('hidden');
+                step2.classList.add('fade-in');
+            }
+        }
+
+        function resetApp() {
+            sessionStorage.removeItem(SESSION_KEY);
+            inputGroup.value = '';
+            txFortalezas.value = ''; txOportunidades.value = '';
+            txDebilidades.value = ''; txAmenazas.value = '';
+            document.querySelectorAll('.char-counter').forEach(c => c.textContent = '0/500');
+            step2.classList.remove('fade-in');
+            step2.classList.add('fade-out');
+            setTimeout(() => {
+                step2.classList.remove('fade-out');
+                step2.classList.add('hidden');
+                step1.classList.remove('hidden', 'fade-out');
+                inputGroup.focus();
+            }, 500);
+        }
+
+        function updateCounter(textarea, counterId) {
+            const length = textarea.value.length;
+            document.getElementById(counterId).textContent = `${length}/500`;
+        }
+
+        async function submitFoda() {
+            const grupoVal = sessionStorage.getItem(SESSION_KEY);
+            const fortalezasVal = txFortalezas.value.trim();
+            const oportunidadesVal = txOportunidades.value.trim();
+            const debilidadesVal = txDebilidades.value.trim();
+            const amenazasVal = txAmenazas.value.trim();
+
+            if (!fortalezasVal && !oportunidadesVal && !debilidadesVal && !amenazasVal) {
+                showToast('Por favor, completa al menos un cuadrante.', 'warning');
+                return;
+            }
+
+            btnSubmitFoda.disabled = true;
+            btnSubmitFoda.classList.add('loading');
+
+            const payload = [{
+                "grupo": grupoVal,
+                "fortalezas": fortalezasVal || "Sin datos",
+                "oportunidades": oportunidadesVal || "Sin datos",
+                "debilidades": debilidadesVal || "Sin datos",
+                "amenazas": amenazasVal || "Sin datos"
+            }];
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (response.ok) {
+                    showToast('¡FODA guardado exitosamente!', 'success');
+                    setTimeout(() => resetApp(), 3000); 
+                } else { throw new Error('API Error'); }
+            } catch (error) {
+                showToast('Error al guardar los datos.', 'error');
+            } finally {
+                btnSubmitFoda.disabled = false;
+                btnSubmitFoda.classList.remove('loading');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            let icon = type === 'error' ? '❌' : (type === 'warning' ? '⚠️' : '✅');
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
